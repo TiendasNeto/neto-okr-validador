@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Validador OKR · Tiendas Neto</title>
+<title>Validador ORC · Tiendas Neto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -162,8 +163,8 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
 
   <div class="header">
     <div>
-      <div class="eye">Programa de Certificación OKR</div>
-      <h1>Validador OKR con IA</h1>
+      <div class="eye">Programa de Certificación ORC</div>
+      <h1>Validador ORC con IA</h1>
       <div class="sub">Tiendas Neto · Evaluación automática por criterios del programa</div>
     </div>
     <div class="dots">
@@ -174,8 +175,8 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
   </div>
 
   <div class="tabs">
-    <button class="tab on"  onclick="switchTab('info',this)">📖 ¿Qué es un OKR?</button>
-    <button class="tab"     onclick="switchTab('form',this)">✏️ Validar mi OKR</button>
+    <button class="tab on"  onclick="switchTab('info',this)">📖 ¿Qué es un ORC?</button>
+    <button class="tab"     onclick="switchTab('form',this)">✏️ Validar mi ORC</button>
     <button class="tab"     onclick="switchTab('db',this)">📊 Certificaciones</button>
   </div>
 
@@ -183,28 +184,28 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
   <div id="panel-info" class="panel on">
 
     <div class="info-hero">
-      <h2>¿Qué es un OKR?</h2>
-      <p>Todo lo que necesitas saber antes de ingresar tu OKR al validador. Léelo una vez y tendrás el mapa completo.</p>
+      <h2>¿Qué es un ORC?</h2>
+      <p>Todo lo que necesitas saber antes de ingresar tu ORC al validador. Léelo una vez y tendrás el mapa completo.</p>
     </div>
 
     <div class="info-grid">
       <div class="ic" style="border-top-color:var(--navy)">
         <div class="ic-icon">🎯</div>
         <div class="ic-lbl" style="color:var(--navy)">O</div>
-        <div class="ic-title">Objective</div>
+        <div class="ic-title">Objetivo</div>
         <div class="ic-def">El <strong>destino</strong> que quieres alcanzar. Aspiracional, cualitativo, sin números. Responde: <em>¿hacia dónde vamos este trimestre?</em></div>
       </div>
       <div class="ic" style="border-top-color:var(--orange)">
         <div class="ic-icon">📏</div>
-        <div class="ic-lbl" style="color:var(--orange)">KR</div>
-        <div class="ic-title">Key Results</div>
+        <div class="ic-lbl" style="color:var(--orange)">RC</div>
+        <div class="ic-title">Resultados Clave</div>
         <div class="ic-def">Las <strong>señales de que llegas</strong>. Siempre con número, baseline y meta clara. Responden: <em>¿cómo sabremos que llegamos?</em></div>
       </div>
       <div class="ic" style="border-top-color:var(--purple)">
         <div class="ic-icon">⚙️</div>
         <div class="ic-lbl" style="color:var(--purple)">Tareas</div>
         <div class="ic-title">Tareas / Iniciativas</div>
-        <div class="ic-def">Las <strong>acciones concretas</strong> que ejecutas para mover los Key Results. Responden: <em>¿qué vamos a hacer?</em></div>
+        <div class="ic-def">Las <strong>acciones concretas</strong> que ejecutas para mover los Resultado Claves. Responden: <em>¿qué vamos a hacer?</em></div>
       </div>
     </div>
 
@@ -213,18 +214,18 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       <div class="flow-steps">
         <div class="flow-step">
           <div class="flow-dot" style="background:#EEF1FF">🎯</div>
-          <div class="flow-lbl" style="color:var(--navy)">Objective</div>
+          <div class="flow-lbl" style="color:var(--navy)">Objetivo</div>
           <div class="flow-desc">Define el norte estratégico del trimestre</div>
         </div>
         <div class="flow-step">
           <div class="flow-dot" style="background:#FFF4EC">📏</div>
-          <div class="flow-lbl" style="color:var(--orange)">Key Results</div>
+          <div class="flow-lbl" style="color:var(--orange)">Resultados Clave</div>
           <div class="flow-desc">Miden si avanzas hacia ese norte</div>
         </div>
         <div class="flow-step">
           <div class="flow-dot" style="background:#f5f3ff">⚙️</div>
           <div class="flow-lbl" style="color:var(--purple)">Tareas</div>
-          <div class="flow-desc">Acciones que mueven los Key Results</div>
+          <div class="flow-desc">Acciones que mueven los Resultado Claves</div>
         </div>
         <div class="flow-step">
           <div class="flow-dot" style="background:#f0fdf4">📈</div>
@@ -234,28 +235,28 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       </div>
     </div>
 
-    <!-- DOS TIPOS DE OKR -->
+    <!-- DOS TIPOS DE ORC -->
     <div class="info-kpi">
-      <h3>Los dos tipos de OKR válidos en Neto</h3>
-      <p class="sub">Un buen OKR en una empresa operativa puede ser de mejora o de iniciativa nueva — ambos son válidos y necesarios.</p>
+      <h3>Los dos tipos de ORC válidos en Neto</h3>
+      <p class="sub">Un buen ORC en una empresa operativa puede ser de mejora o de iniciativa nueva — ambos son válidos y necesarios.</p>
       <div class="tipo-grid">
         <div class="tipo-card" style="background:#EEF1FF;border-left-color:var(--navy)">
-          <h4 style="color:var(--navy)">Tipo 1 — OKR de mejora operativa</h4>
-          <p>Mejora una métrica que ya existe. El KPI ya se mide permanentemente; el Key Result lo mueve durante el ciclo.</p>
-          <div class="ex-label" style="color:var(--navy)">🎯 Objective</div>
+          <h4 style="color:var(--navy)">Tipo 1 — ORC de mejora operativa</h4>
+          <p>Mejora una métrica que ya existe. El KPI ya se mide permanentemente; el Resultado Clave lo mueve durante el ciclo.</p>
+          <div class="ex-label" style="color:var(--navy)">🎯 Objetivo</div>
           <div class="ex-obj">Ser la tienda más rentable de la región este trimestre</div>
-          <div class="ex-label" style="color:var(--navy)">📏 Key Results</div>
+          <div class="ex-label" style="color:var(--navy)">📏 Resultado Claves</div>
           <div class="ex-kr">Ticket promedio: $150 → $180</div>
           <div class="ex-kr">Merma: 3.2% → 2.5%</div>
           <div class="ex-kr">Disponibilidad anaquel: actual → ≥92%</div>
           <div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--navy);background:#c7d2fe;padding:3px 10px;border-radius:10px;display:inline-block">mueve KPIs existentes</div>
         </div>
         <div class="tipo-card" style="background:#f0fdf4;border-left-color:var(--green)">
-          <h4 style="color:var(--green)">Tipo 2 — OKR de iniciativa nueva</h4>
-          <p>Crea algo que no existía antes. El Key Result mide una métrica nueva surgida de una apuesta estratégica.</p>
-          <div class="ex-label" style="color:var(--green)">🎯 Objective</div>
+          <h4 style="color:var(--green)">Tipo 2 — ORC de iniciativa nueva</h4>
+          <p>Crea algo que no existía antes. El Resultado Clave mide una métrica nueva surgida de una apuesta estratégica.</p>
+          <div class="ex-label" style="color:var(--green)">🎯 Objetivo</div>
           <div class="ex-obj">Construir la primera base de clientes leales de Neto</div>
-          <div class="ex-label" style="color:var(--green)">📏 Key Results</div>
+          <div class="ex-label" style="color:var(--green)">📏 Resultado Claves</div>
           <div class="ex-kr">5,000 clientes registrados en programa de lealtad</div>
           <div class="ex-kr">NPS del programa ≥ 40 al cierre del trimestre</div>
           <div class="ex-kr">30% de clientes realiza una segunda compra</div>
@@ -264,13 +265,13 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       </div>
       <div class="regla-box">
         <h4>💡 Regla práctica para Neto</h4>
-        <p>En cada ciclo define al menos un OKR de cada tipo. <strong>El Tipo 1 te mantiene operando bien. El Tipo 2 te hace evolucionar.</strong> Una empresa que solo hace Tipo 1 opera mejor pero no cambia. Una que solo hace Tipo 2 innova pero pierde el piso operativo.</p>
+        <p>En cada ciclo define al menos un ORC de cada tipo. <strong>El Tipo 1 te mantiene operando bien. El Tipo 2 te hace evolucionar.</strong> Una empresa que solo hace Tipo 1 opera mejor pero no cambia. Una que solo hace Tipo 2 innova pero pierde el piso operativo.</p>
       </div>
     </div>
 
     <div class="info-comp">
       <div class="comp-c" style="background:#EEF1FF;border:1px solid #c7d2fe">
-        <h4 style="color:var(--navy)">✅ Un buen Key Result...</h4>
+        <h4 style="color:var(--navy)">✅ Un buen Resultado Clave...</h4>
         <ul>
           <li>Tiene baseline y meta con brecha real</li>
           <li>Mide un resultado, no una actividad</li>
@@ -282,23 +283,23 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       <div class="comp-c" style="background:#fee2e2;border:1px solid #fca5a5">
         <h4 style="color:#b91c1c">❌ Errores que causan rechazo</h4>
         <ul>
-          <li>Poner números en el Objective</li>
-          <li>KR que empieza con verbo de actividad</li>
+          <li>Poner números en el Objetivo</li>
+          <li>RC que empieza con verbo de actividad</li>
           <li>KR sin baseline definido</li>
           <li>Meta igual o casi igual al baseline</li>
-          <li>Tareas disfrazadas de Key Results</li>
+          <li>Tareas disfrazadas de Resultado Claves</li>
         </ul>
       </div>
     </div>
 
     <div class="info-tip">
       <h4>💡 La pregunta que lo decide todo</h4>
-      <p>¿Este número existiría aunque no hubiera OKR este ciclo? Si la respuesta es <strong>sí</strong> → es un KPI. Si es un número <strong>nuevo</strong> porque te propusiste cambiar algo → es un Key Result. El KR es el vehículo. El KPI es el destino.</p>
+      <p>¿Este número existiría aunque no hubiera ORC este ciclo? Si la respuesta es <strong>sí</strong> → es un KPI. Si es un número <strong>nuevo</strong> porque te propusiste cambiar algo → es un Resultado Clave. El RC es el vehículo. El KPI es el destino.</p>
     </div>
 
     <div class="info-cta">
-      <p>¿Listo para ingresar tu OKR?<br><span>La IA lo evalúa en segundos con los criterios del programa.</span></p>
-      <button onclick="goToForm()">Validar mi OKR ↗</button>
+      <p>¿Listo para ingresar tu ORC?<br><span>La IA lo evalúa en segundos con los criterios del programa.</span></p>
+      <button onclick="goToForm()">Validar mi ORC ↗</button>
     </div>
 
   </div>
@@ -334,7 +335,7 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       </div>
 
       <div class="card">
-        <div class="card-title">🎯 Objective</div>
+        <div class="card-title">🎯 Objetivo</div>
         <div class="field">
           <label>¿Qué quieres lograr este trimestre? <span class="req">*</span></label>
           <textarea id="f-obj" rows="3" placeholder="Ej. Ser el área de Marketing más relevante de Neto, que convierta cada campaña en ventas medibles."></textarea>
@@ -343,19 +344,19 @@ textarea{resize:vertical;line-height:1.6;min-height:80px}
       </div>
 
       <div class="card">
-        <div class="card-title">📏 Key Results y Tareas</div>
+        <div class="card-title">📏 Resultados Clave y Tareas</div>
         <div id="kr-container"></div>
         <div class="add-kr-wrap">
           <button class="add-kr-btn" id="btn-add-kr" onclick="addKR()">
-            <span style="font-size:20px;line-height:1">＋</span> Agregar Key Result
+            <span style="font-size:20px;line-height:1">＋</span> Agregar Resultado Clave
             <span id="kr-counter" style="font-size:12px;color:#9ca3af"></span>
           </button>
-          <p class="kr-hint">La metodología OKR recomienda entre 3 y 5 Key Results por Objective</p>
+          <p class="kr-hint">La metodología ORC recomienda entre 3 y 5 Resultados Clave por Objetivo</p>
         </div>
       </div>
 
       <div id="err-box" class="err-box"></div>
-      <div id="loading" class="loading"><div class="spin"></div><span>La IA está evaluando tu OKR con los criterios del programa...</span></div>
+      <div id="loading" class="loading"><div class="spin"></div><span>La IA está evaluando tu ORC con los criterios del programa...</span></div>
       <div class="actions">
         <button class="btn primary" id="btn-eval" onclick="evaluar()">Evaluar con IA ↗</button>
         <button class="btn" onclick="limpiar()">Limpiar formulario</button>
@@ -518,7 +519,7 @@ function evaluar(){
   const nombre=gv('f-nombre'),puesto=gv('f-puesto'),area=gv('f-area'),nivel=gv('f-nivel'),obj=gv('f-obj');
   if(!nombre||!puesto||!area||!nivel||!obj){showErr('Completa todos los campos obligatorios (*).');return;}
   const krs=collectKRs();
-  if(!krs.length){showErr('Ingresa al menos un Key Result con descripción.');return;}
+  if(!krs.length){showErr('Ingresa al menos un Resultado Clave con descripción.');return;}
   const nivelLabel=nivel==='N2'?'Nivel 2 — Gerente':'Nivel 3 — Director';
   lastFormData={nombre,puesto,area,nivel,obj,krs};
   lastSuggestions={};
@@ -552,7 +553,7 @@ async function directEval(nombre,puesto,area,nivel,nivelLabel,obj,krs){
 function renderResult(r,meta){
   const col=r.semaforo;
   const iconMap={verde:'✅',amarillo:'⚠️',rojo:'❌'};
-  const guiaMap={verde:'→ Siguiente paso',amarillo:'→ Correcciones antes de reenviar',rojo:'→ Cómo reescribir tu OKR'};
+  const guiaMap={verde:'→ Siguiente paso',amarillo:'→ Correcciones antes de reenviar',rojo:'→ Cómo reescribir tu ORC'};
   const hasSuggestions=Object.keys(lastSuggestions).length>0;
 
   const krHTML=(r.kr_feedback||[]).map(k=>{
@@ -560,7 +561,7 @@ function renderResult(r,meta){
     const accent=KR_COLORS[(k.kr-1)%KR_COLORS.length];
     return `<div class="kr-result" style="border-left-color:${accent}">
       <div class="kr-result-head" onclick="toggleAcc(this)">
-        <span style="font-size:13px;font-weight:700;color:${accent}">Key Result ${k.kr}</span>
+        <span style="font-size:13px;font-weight:700;color:${accent}">Resultado Clave ${k.kr}</span>
         <div style="display:flex;align-items:center;gap:10px"><span class="badge ${kc}">${k.puntaje}/20 pts</span><span class="chevron">▼</span></div>
       </div>
       <div class="kr-result-body">
@@ -587,7 +588,7 @@ function renderResult(r,meta){
       <p style="font-size:14px;line-height:1.75;color:var(--g700);margin-top:10px">${r.resumen}</p>
       ${fortalezas?`<div class="r-section"><div class="r-section-title">✓ Fortalezas</div><ul>${fortalezas}</ul></div>`:''}
       ${problemas?`<div class="r-section"><div class="r-section-title">✗ Problemas detectados</div><ul>${problemas}</ul></div>`:''}
-      <div class="r-section"><div class="r-section-title">Evaluación por Key Result — toca para expandir</div>${krHTML}</div>
+      <div class="r-section"><div class="r-section-title">Evaluación por Resultado Clave — toca para expandir</div>${krHTML}</div>
       <div class="guia-box ${col}"><div class="guia-title">${guiaMap[col]}</div><p style="font-size:14px;line-height:1.75;color:var(--g700)">${r.guia_mejora}</p></div>
       <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
         ${col!=='verde'?`<button class="btn primary" onclick="resetWithSuggestions()">${hasSuggestions?'✏️ Corregir con sugerencias aplicadas':'✏️ Corregir y volver a validar'}</button>`:''}
@@ -633,7 +634,7 @@ function renderDB(){
     {n:db.length,l:'Total enviados',c:'#1B2A6B'},{n:ap,l:'Aprobados',c:'#15803d'},
     {n:co,l:'Condicionales',c:'#d97706'},{n:re,l:'No aprobados',c:'#dc2626'},
   ].map(s=>`<div class="stat-card"><div class="stat-n" style="color:${s.c}">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
-  if(!db.length){document.getElementById('db-content').innerHTML='<div class="empty-state">Aún no hay registros. Valida tu primer OKR.</div>';return;}
+  if(!db.length){document.getElementById('db-content').innerHTML='<div class="empty-state">Aún no hay registros. Valida tu primer ORC.</div>';return;}
   document.getElementById('db-content').innerHTML=`<div class="db-wrap"><table class="db-table">
     <thead><tr><th>Colaborador</th><th>Área</th><th>Nivel</th><th>Puntaje</th><th>Estado</th><th>Fecha</th></tr></thead>
     <tbody>${db.map(r=>`<tr>
