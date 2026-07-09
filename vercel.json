@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/api/evaluar", "dest": "/api/evaluar.js" },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/$1" }
+  "rewrites": [
+    { "source": "/api/evaluar", "destination": "/api/evaluar.js" }
   ]
 }
