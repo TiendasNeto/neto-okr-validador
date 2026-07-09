@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -595,7 +594,7 @@ async function directEval(nombre,puesto,area,nivel,nivelLabel,obj,krs){
     } else {
       lastRcAdicional=null;
     }
-    pushDB({nombre,puesto,area,nivelLabel,puntaje:json.puntaje,semaforo:json.semaforo,estado:json.estado,fecha:new Date().toLocaleDateString('es-MX')});
+    pushDB({nombre,puesto,area,nivel,nivelLabel,obj,krs,puntaje:json.puntaje,semaforo:json.semaforo,estado:json.estado,fecha:new Date().toLocaleDateString('es-MX')});
     setLoading(false);
     renderResult(json,{nombre,area,nivelLabel});
   }catch(e){
@@ -606,6 +605,8 @@ async function directEval(nombre,puesto,area,nivel,nivelLabel,obj,krs){
 
 /* ── Render result ── */
 function renderResult(r,meta){
+  lastResult=r;
+  lastResultMeta=meta;
   const col=r.semaforo;
   const iconMap={verde:'✅',amarillo:'⚠️',rojo:'❌'};
   const guiaMap={verde:'→ Siguiente paso',amarillo:'→ Correcciones antes de reenviar',rojo:'→ Cómo reescribir tu ORC'};
@@ -647,6 +648,7 @@ function renderResult(r,meta){
       <div class="guia-box ${col}"><div class="guia-title">${guiaMap[col]}</div><p style="font-size:14px;line-height:1.75;color:var(--g700)">${r.guia_mejora}</p></div>
       <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
         ${col!=='verde'?`<button class="btn primary" onclick="resetWithSuggestions()">${hasSuggestions?'✏️ Corregir con sugerencias aplicadas':'✏️ Corregir y volver a validar'}</button>`:''}
+        ${col==='verde'?`<button class="btn primary" onclick="descargarConstancia()" style="background:#15803d;border-color:#15803d">⬇️ Descargar constancia</button>`:''}
         <button class="reset-btn" onclick="resetClean()">Empezar de cero</button>
       </div>
     </div>`;
@@ -679,7 +681,119 @@ function resetClean(){
   init();showErr('');
 }
 
-/* ── DB ── */
+let lastResult=null;
+let lastResultMeta=null;
+
+function descargarConstancia(){
+  if(!lastResult||!lastResultMeta) return;
+  const r=lastResult, meta=lastResultMeta;
+  const fecha=new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  const krsHTML=(r.kr_feedback||[]).map(k=>`
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1B2A6B">RC ${k.kr}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb">${k.comentario}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#15803d">${k.puntaje}/20</td>
+    </tr>`).join('');
+
+  const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;margin:0;padding:40px;color:#1f2937;background:#fff}
+    .header{background:#1B2A6B;padding:24px 32px;border-radius:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+    .header h1{color:#fff;font-size:20px;margin:0}
+    .header .sub{color:#94a3b8;font-size:12px;margin-top:4px}
+    .header .score{text-align:right}
+    .header .score .n{font-size:36px;font-weight:700;color:#fff}
+    .header .score .l{font-size:12px;color:#94a3b8}
+    .badge{display:inline-block;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:5px 16px;border-radius:20px;font-weight:700;font-size:14px;margin-bottom:16px}
+    .section{margin-bottom:20px}
+    .section h3{font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}
+    .obj-box{background:#EEF1FF;border-radius:8px;padding:12px 16px;font-size:14px;color:#1B2A6B;font-weight:600;line-height:1.5}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:#1B2A6B;color:#fff;padding:10px 12px;text-align:left;font-size:12px}
+    .fortaleza{font-size:13px;padding:4px 0;color:#374151}
+    .fortaleza::before{content:'✓ ';color:#15803d;font-weight:700}
+    .footer{margin-top:32px;text-align:center;font-size:11px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+    .meta-item{background:#f9fafb;border-radius:8px;padding:10px 14px}
+    .meta-item .l{font-size:11px;color:#9ca3af;margin-bottom:3px}
+    .meta-item .v{font-size:14px;font-weight:600;color:#1f2937}
+  </style></head><body>
+  <div class="header">
+    <div>
+      <div class="sub">PROGRAMA DE CERTIFICACIÓN ORC · TIENDAS NETO</div>
+      <h1>Constancia de Certificación</h1>
+      <div class="sub">Emitida el ${fecha}</div>
+    </div>
+    <div class="score">
+      <div class="n">${r.puntaje}</div>
+      <div class="l">puntos / 100</div>
+    </div>
+  </div>
+
+  <div class="badge">✅ ${r.estado}</div>
+
+  <div class="meta-grid">
+    <div class="meta-item"><div class="l">Colaborador</div><div class="v">${meta.nombre}</div></div>
+    <div class="meta-item"><div class="l">Área / Dirección</div><div class="v">${meta.area}</div></div>
+    <div class="meta-item"><div class="l">Nivel</div><div class="v">${meta.nivelLabel}</div></div>
+  </div>
+
+  <div class="section">
+    <h3>🎯 Objetivo</h3>
+    <div class="obj-box">${lastFormData?.obj||''}</div>
+  </div>
+
+  <div class="section">
+    <h3>📏 Evaluación de Resultados Clave</h3>
+    <table>
+      <thead><tr><th>RC</th><th>Comentario</th><th style="text-align:center">Puntaje</th></tr></thead>
+      <tbody>${krsHTML}</tbody>
+    </table>
+  </div>
+
+  ${r.fortalezas&&r.fortalezas.length?`<div class="section">
+    <h3>✓ Fortalezas destacadas</h3>
+    ${r.fortalezas.map(f=>`<div class="fortaleza">${f}</div>`).join('')}
+  </div>`:''}
+
+  <div class="section">
+    <h3>💬 Resumen de la evaluación</h3>
+    <p style="font-size:14px;line-height:1.7;color:#374151">${r.resumen}</p>
+  </div>
+
+  <div class="footer">
+    Este documento es un respaldo de la evaluación automática realizada en el Validador ORC de Tiendas Neto.<br>
+    La certificación oficial queda registrada en el sistema del Programa de Certificación ORC.
+  </div>
+  <script>window.onload=()=>window.print()</script>
+  </body></html>`;
+
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Constancia_ORC_${meta.nombre.replace(/\s+/g,'_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function revalidar(idx){
+  const db=loadDB();
+  const r=db[idx];
+  if(!r) return;
+  // Switch to form tab
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',i===1));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('on',i===1));
+  // Reset result
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('result-section').innerHTML='';
+  document.getElementById('form-section').style.display='block';
+  showErr('');
+  lastSuggestions={};lastRcAdicional=null;
+  // Pre-fill with saved data
+  lastFormData={nombre:r.nombre,puesto:r.puesto,area:r.area,nivel:r.nivel,obj:r.obj,krs:r.krs||[]};
+  init(lastFormData);
+}
+
 function renderDB(){
   const db=loadDB();
   const ap=db.filter(r=>r.semaforo==='verde').length;
@@ -691,13 +805,14 @@ function renderDB(){
   ].map(s=>`<div class="stat-card"><div class="stat-n" style="color:${s.c}">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
   if(!db.length){document.getElementById('db-content').innerHTML='<div class="empty-state">Aún no hay registros. Valida tu primer ORC.</div>';return;}
   document.getElementById('db-content').innerHTML=`<div class="db-wrap"><table class="db-table">
-    <thead><tr><th>Colaborador</th><th>Área</th><th>Nivel</th><th>Puntaje</th><th>Estado</th><th>Fecha</th></tr></thead>
-    <tbody>${db.map(r=>`<tr>
+    <thead><tr><th>Colaborador</th><th>Área</th><th>Nivel</th><th>Puntaje</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>${db.map((r,i)=>`<tr>
       <td><div class="nm">${r.nombre}</div><div class="nm-sub">${r.puesto}</div></td>
       <td>${r.area}</td><td><span class="lvl-pill">${r.nivelLabel}</span></td>
       <td><strong>${r.puntaje}</strong>/100</td>
       <td><span class="pill ${r.semaforo}">${r.estado}</span></td>
       <td style="color:var(--g400)">${r.fecha}</td>
+      <td><button onclick="revalidar(${i})" style="padding:4px 10px;border-radius:6px;border:1px solid var(--g200);background:#fff;font-size:12px;cursor:pointer;color:var(--navy);font-family:inherit;font-weight:500" title="Volver a validar este ORC">↺ Revalidar</button></td>
     </tr>`).join('')}</tbody>
   </table></div>`;
 }
