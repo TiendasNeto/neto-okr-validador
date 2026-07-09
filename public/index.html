@@ -1,1 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validador ORC · Tiendas Neto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B2A6B;--navy-light:#2a3d8f;--orange:#E87722;--orange-light:#FFF4EC;
+  --purple:#6d28d9;--teal:#0e7490;--green:#15803d;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g400:#9ca3af;--g600:#4b5563;--g700:#374151;--g900:#111827;
+  --s-bg:#dcfce7;--s-t:#15803d;--s-b:#86efac;
+  --w-bg:#fef9c3;--w-t:#a16207;--w-b:#fde047;
+  --d-bg:#fee2e2;--d-t:#b91c1c;--d-b:#fca5a5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#f1f5f9;color:var(--g900);min-height:100vh}
+.shell{max-width:780px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.header{background:var(--navy);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:22px;font-weight:700;color:#fff}
+.header .eye{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.header .sub{font-size:13px;color:#94a3b8;margin-top:3px}
+.dots{display:flex;gap:7px}.dot{width:14px;height:14px;border-radius:50%}
+.tabs{display:flex;background:#fff;border:1px solid var(--g200);border-radius:12px;padding:4px;margin-bottom:1.5rem;gap:4px}
+.tab{flex:1;padding:9px 12px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--g400);border-radius:8px;transition:all .2s}
+.tab.on{background:var(--navy);color:#fff;font-weight:700}
+.tab:not(.on):hover{background:var(--g100);color:var(--g700)}
+.panel{display:none}.panel.on{display:block}
+.card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:13px;font-weight:500;color:var(--g600)}
+.req{color:var(--orange)}
+input,select,textarea{border:1px solid var(--g200);border-radius:8px;padding:9px 12px;font-size:14px;color:var(--g900);font-family:inherit;outline:none;background:#fff;transition:border-color .15s,box-shadow .15s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,42,107,.08)}
+textarea{resize:vertical;line-height:1.6;min-height:80px}
+.hint{font-size:12px;color:var(--g400);line-height:1.5}
+.kr-block{border:1px solid var(--g200);border-left-width:4px;border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:12px;background:var(--g50)}
+.kr-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.kr-block-label{font-size:12px;font-weight:700;letter-spacing:.5px}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:18px;color:var(--g400);padding:2px 6px;border-radius:6px;line-height:1;transition:all .15s}
+.icon-btn:hover{color:#dc2626;background:#fee2e2}
+.tarea-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.tarea-row input{flex:1}
+.add-btn{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:13px;color:var(--navy);cursor:pointer;border:1px dashed var(--g200);border-radius:8px;padding:6px 12px;background:transparent;font-family:inherit;font-weight:500;transition:all .15s}
+.add-btn:hover{background:#EEF1FF;border-color:var(--navy)}
+.add-kr-wrap{margin-bottom:14px}
+.add-kr-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border:1.5px dashed var(--g200);border-radius:10px;background:transparent;font-size:14px;color:var(--g600);cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s}
+.add-kr-btn:hover{border-color:var(--navy);color:var(--navy);background:#EEF1FF}
+.add-kr-btn:disabled{opacity:.4;cursor:not-allowed}
+.kr-hint{font-size:12px;color:var(--g400);text-align:center;margin-top:6px}
+.actions{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:8px;border:1px solid var(--g200);font-size:14px;cursor:pointer;font-family:inherit;background:#fff;color:var(--g700);font-weight:500;transition:all .15s}
+.btn:hover{background:var(--g50)}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.primary:hover{background:var(--navy-light)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.err-box{background:var(--d-bg);border:1px solid var(--d-b);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--d-t);margin-bottom:12px;display:none}
+.loading{display:none;align-items:center;gap:10px;padding:1.25rem 0;color:var(--g400);font-size:14px}
+.spin{width:20px;height:20px;border:2px solid var(--g200);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* RESULT */
+.result-header{background:var(--navy);border-radius:12px 12px 0 0;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.result-body{background:#fff;border:1px solid var(--g200);border-top:none;border-radius:0 0 12px 12px;padding:1.5rem}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid}
+.badge.verde{background:var(--s-bg);color:var(--s-t);border-color:var(--s-b)}
+.badge.amarillo{background:var(--w-bg);color:var(--w-t);border-color:var(--w-b)}
+.badge.rojo{background:var(--d-bg);color:var(--d-t);border-color:var(--d-b)}
+.score-big{font-size:34px;font-weight:700;color:#fff}
+.score-sub{font-size:14px;color:#94a3b8;font-weight:400}
+.bar-bg{height:8px;border-radius:4px;background:var(--g200);overflow:hidden;margin:10px 0}
+.bar-fill{height:100%;border-radius:4px;transition:width .7s ease}
+.bar-fill.verde{background:#16a34a}.bar-fill.amarillo{background:#d97706}.bar-fill.rojo{background:#dc2626}
+.r-section{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--g100)}
+.r-section-title{font-size:11px;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.r-section ul{padding-left:1.2rem;font-size:14px;line-height:2;color:var(--g700)}
+.r-section p{font-size:14px;line-height:1.75;color:var(--g700)}
+.kr-result{border:1px solid var(--g200);border-radius:10px;margin-bottom:10px;overflow:hidden;border-left-width:4px}
+.kr-result-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--g50);cursor:pointer;user-select:none}
+.kr-result-body{padding:12px 14px;border-top:1px solid var(--g100);font-size:14px;line-height:1.75;color:var(--g700);display:none}
+.kr-result-body.open{display:block}
+.suggestion-box{margin-top:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px}
+.suggestion-label{font-size:12px;font-weight:700;color:#15803d;margin-bottom:4px}
+.suggestion-text{font-size:13px;color:#166534;font-style:italic;line-height:1.6}
+.tarea-feedback{background:var(--g100);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:13px;color:var(--g600);line-height:1.6}
+.guia-box{border-radius:10px;padding:1rem 1.25rem;margin-top:1rem}
+.guia-box.verde{background:var(--s-bg);border:1px solid var(--s-b)}.guia-box.verde .guia-title{color:var(--s-t)}
+.guia-box.amarillo{background:var(--w-bg);border:1px solid var(--w-b)}.guia-box.amarillo .guia-title{color:var(--w-t)}
+.guia-box.rojo{background:var(--d-bg);border:1px solid var(--d-b)}.guia-box.rojo .guia-title{color:var(--d-t)}
+.guia-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.reset-btn{margin-top:1rem;padding:9px 20px;border-radius:8px;border:1px solid var(--g200);background:#fff;font-size:14px;cursor:pointer;color:var(--g600);font-family:inherit}
+.reset-btn:hover{background:var(--g50)}
+.chevron{font-size:12px;color:var(--g400)}
+/* DB */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:1rem;text-align:center}
+.stat-n{font-size:28px;font-weight:700}.stat-l{font-size:11px;color:var(--g400);margin-top:2px}
+.db-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--g200)}
+.db-table{width:100%;border-collapse:collapse;font-size:13px}
+.db-table thead tr{background:var(--navy)}
+.db-table th{text-align:left;padding:10px 14px;color:#fff;font-weight:600;font-size:12px;letter-spacing:.3px}
+.db-table td{padding:10px 14px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.db-table tr:last-child td{border-bottom:none}
+.db-table tr:nth-child(even) td{background:var(--g50)}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.pill.verde{background:var(--s-bg);color:var(--s-t)}.pill.amarillo{background:var(--w-bg);color:var(--w-t)}.pill.rojo{background:var(--d-bg);color:var(--d-t)}
+.lvl-pill{font-size:11px;background:#EEF1FF;color:var(--navy);padding:2px 8px;border-radius:10px;font-weight:600}
+.empty-state{text-align:center;padding:2.5rem;color:var(--g400);font-size:14px}
+.nm{font-weight:600;color:var(--g900)}.nm-sub{font-size:11px;color:var(--g400);margin-top:1px}
+/* INFOGRAFÍA */
+.info-hero{background:var(--navy);border-radius:16px;padding:2rem;margin-bottom:1.5rem;text-align:center}
+.info-hero h2{font-size:24px;font-weight:700;color:#fff;margin-bottom:6px}
+.info-hero p{font-size:14px;color:#94a3b8;max-width:520px;margin:0 auto;line-height:1.6}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.5rem}
+.ic{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.4rem;text-align:center;border-top-width:4px}
+.ic-icon{font-size:34px;margin-bottom:10px}.ic-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.ic-title{font-size:16px;font-weight:700;color:var(--g900);margin-bottom:7px}
+.ic-def{font-size:13px;color:var(--g600);line-height:1.6}
+.info-flow{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem}
+.info-flow h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1.2rem}
+.flow-steps{display:flex;align-items:flex-start}
+.flow-step{flex:1;text-align:center;position:relative}
+.flow-step:not(:last-child)::after{content:'→';position:absolute;right:-10px;top:18px;font-size:18px;color:var(--orange);font-weight:700}
+.flow-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.flow-lbl{font-size:12px;font-weight:700;color:var(--g700);margin-bottom:3px}
+.flow-desc{font-size:11px;color:var(--g400);line-height:1.4}
+.info-kpi{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem}
+.info-kpi h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.info-kpi .sub{font-size:13px;color:var(--g400);margin-bottom:1.2rem}
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tipo-card{border-radius:10px;padding:1.1rem;border-left:4px solid}
+.tipo-card h4{font-size:13px;font-weight:700;margin-bottom:6px}
+.tipo-card p{font-size:13px;color:var(--g600);line-height:1.6;margin-bottom:8px}
+.tipo-card .ex-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.tipo-card .ex-obj{font-size:13px;font-weight:600;color:var(--g900);margin-bottom:6px;line-height:1.4}
+.tipo-card .ex-kr{font-size:12px;color:var(--g600);line-height:1.7;padding-left:12px;position:relative}
+.tipo-card .ex-kr::before{content:'·';position:absolute;left:2px;font-weight:700;font-size:16px;line-height:1.2}
+.regla-box{background:linear-gradient(135deg,#FFF4EC,#fff);border:1px solid #fde68a;border-radius:10px;padding:1rem 1.25rem;margin-top:1rem}
+.regla-box h4{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:5px}
+.regla-box p{font-size:13px;color:var(--g700);line-height:1.7}
+.info-comp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+.comp-c{border-radius:12px;padding:1.25rem}
+.comp-c h4{font-size:14px;font-weight:700;margin-bottom:10px}
+.comp-c ul{padding-left:0;list-style:none}
+.comp-c li{font-size:13px;line-height:1.9;color:var(--g700);padding-left:18px;position:relative}
+.comp-c li::before{content:'·';position:absolute;left:5px;font-weight:700}
+.info-tip{background:linear-gradient(135deg,var(--orange-light),#fff);border:1px solid #fde68a;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem}
+.info-tip h4{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:7px}
+.info-tip p{font-size:14px;color:var(--g700);line-height:1.7}
+.info-cta{background:var(--navy);border-radius:12px;padding:1.25rem 1.5rem;text-align:center}
+.info-cta p{font-size:15px;color:#fff;line-height:1.7;font-weight:500}
+.info-cta span{color:var(--orange);font-weight:700}
+.info-cta button{margin-top:12px;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.info-cta button:hover{background:#d4680f}
+</style>
+</head>
+<body>
+<div class="shell">
 
+  <div class="header">
+    <div>
+      <div class="eye">Programa de Certificación ORC</div>
+      <h1>Validador ORC con IA</h1>
+      <div class="sub">Tiendas Neto · Evaluación automática por criterios del programa</div>
+    </div>
+    <div class="dots">
+      <div class="dot" style="background:#16a34a"></div>
+      <div class="dot" style="background:#d97706"></div>
+      <div class="dot" style="background:#dc2626"></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on"  onclick="switchTab('info',this)">📖 ¿Qué es un ORC?</button>
+    <button class="tab"     onclick="switchTab('form',this)">✏️ Validar mi ORC</button>
+    <button class="tab"     onclick="switchTab('db',this)">📊 Certificaciones</button>
+  </div>
+
+  <!-- ══ INFOGRAFÍA (tab 1) ══════════════════════════════════ -->
+  <div id="panel-info" class="panel on">
+
+    <div class="info-hero">
+      <h2>¿Qué es un ORC?</h2>
+      <p>Todo lo que necesitas saber antes de ingresar tu ORC al validador. Léelo una vez y tendrás el mapa completo.</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="ic" style="border-top-color:var(--navy)">
+        <div class="ic-icon">🎯</div>
+        <div class="ic-lbl" style="color:var(--navy)">O</div>
+        <div class="ic-title">Objetivo</div>
+        <div class="ic-def">El <strong>destino</strong> que quieres alcanzar. Aspiracional, cualitativo, sin números. Responde: <em>¿hacia dónde vamos este trimestre?</em></div>
+      </div>
+      <div class="ic" style="border-top-color:var(--orange)">
+        <div class="ic-icon">📏</div>
+        <div class="ic-lbl" style="color:var(--orange)">RC</div>
+        <div class="ic-title">Resultados Clave</div>
+        <div class="ic-def">Las <strong>señales de que llegas</strong>. Siempre con número, baseline y meta clara. Responden: <em>¿cómo sabremos que llegamos?</em></div>
+      </div>
+      <div class="ic" style="border-top-color:var(--purple)">
+        <div class="ic-icon">⚙️</div>
+        <div class="ic-lbl" style="color:var(--purple)">Tareas</div>
+        <div class="ic-title">Tareas / Iniciativas</div>
+        <div class="ic-def">Las <strong>acciones concretas</strong> que ejecutas para mover los Key Results. Responden: <em>¿qué vamos a hacer?</em></div>
+      </div>
+    </div>
+
+    <div class="info-flow">
+      <h3>¿Cómo se relacionan?</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#EEF1FF">🎯</div>
+          <div class="flow-lbl" style="color:var(--navy)">Objetivo</div>
+          <div class="flow-desc">Define el norte estratégico del trimestre</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#FFF4EC">📏</div>
+          <div class="flow-lbl" style="color:var(--orange)">Resultados Clave</div>
+          <div class="flow-desc">Miden si avanzas hacia ese norte</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#f5f3ff">⚙️</div>
+          <div class="flow-lbl" style="color:var(--purple)">Tareas</div>
+          <div class="flow-desc">Acciones que mueven los Key Results</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#f0fdf4">📈</div>
+          <div class="flow-lbl" style="color:var(--green)">KPI</div>
+          <div class="flow-desc">Indicador permanente que el KR mejora</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOS TIPOS DE ORC -->
+    <div class="info-kpi">
+      <h3>Los dos tipos de ORC válidos en Neto</h3>
+      <p class="sub">Un buen ORC en una empresa operativa puede ser de mejora o de iniciativa nueva — ambos son válidos y necesarios.</p>
+      <div class="tipo-grid">
+        <div class="tipo-card" style="background:#EEF1FF;border-left-color:var(--navy)">
+          <h4 style="color:var(--navy)">Tipo 1 — ORC de mejora operativa</h4>
+          <p>Mejora una métrica que ya existe. El KPI ya se mide permanentemente; el Resultado Clave lo mueve durante el ciclo.</p>
+          <div class="ex-label" style="color:var(--navy)">🎯 Objetivo</div>
+          <div class="ex-obj">Ser la tienda más rentable de la región este trimestre</div>
+          <div class="ex-label" style="color:var(--navy)">📏 Key Results</div>
+          <div class="ex-kr">Ticket promedio: $150 → $180</div>
+          <div class="ex-kr">Merma: 3.2% → 2.5%</div>
+          <div class="ex-kr">Disponibilidad anaquel: actual → ≥92%</div>
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--navy);background:#c7d2fe;padding:3px 10px;border-radius:10px;display:inline-block">mueve KPIs existentes</div>
+        </div>
+        <div class="tipo-card" style="background:#f0fdf4;border-left-color:var(--green)">
+          <h4 style="color:var(--green)">Tipo 2 — ORC de iniciativa nueva</h4>
+          <p>Crea algo que no existía antes. El Resultado Clave mide una métrica nueva surgida de una apuesta estratégica.</p>
+          <div class="ex-label" style="color:var(--green)">🎯 Objetivo</div>
+          <div class="ex-obj">Construir la primera base de clientes leales de Neto</div>
+          <div class="ex-label" style="color:var(--green)">📏 Key Results</div>
+          <div class="ex-kr">5,000 clientes registrados en programa de lealtad</div>
+          <div class="ex-kr">NPS del programa ≥ 40 al cierre del trimestre</div>
+          <div class="ex-kr">30% de clientes realiza una segunda compra</div>
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--green);background:#bbf7d0;padding:3px 10px;border-radius:10px;display:inline-block">crea métricas nuevas</div>
+        </div>
+      </div>
+      <div class="regla-box">
+        <h4>💡 Regla práctica para Neto</h4>
+        <p>En cada ciclo define al menos un ORC de cada tipo. <strong>El Tipo 1 te mantiene operando bien. El Tipo 2 te hace evolucionar.</strong> Una empresa que solo hace Tipo 1 opera mejor pero no cambia. Una que solo hace Tipo 2 innova pero pierde el piso operativo.</p>
+      </div>
+    </div>
+
+    <div class="info-comp">
+      <div class="comp-c" style="background:#EEF1FF;border:1px solid #c7d2fe">
+        <h4 style="color:var(--navy)">✅ Un buen Resultado Clave...</h4>
+        <ul>
+          <li>Tiene baseline y meta con brecha real</li>
+          <li>Mide un resultado, no una actividad</li>
+          <li>No empieza con "crear / implementar / lanzar"</li>
+          <li>Es ambicioso pero alcanzable en un trimestre</li>
+          <li>Tiene un dueño único responsable</li>
+        </ul>
+      </div>
+      <div class="comp-c" style="background:#fee2e2;border:1px solid #fca5a5">
+        <h4 style="color:#b91c1c">❌ Errores que causan rechazo</h4>
+        <ul>
+          <li>Poner números en el Objetivo</li>
+          <li>KR que empieza con verbo de actividad</li>
+          <li>KR sin baseline definido</li>
+          <li>Meta igual o casi igual al baseline</li>
+          <li>Tareas disfrazadas de Key Results</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-tip">
+      <h4>💡 La pregunta que lo decide todo</h4>
+      <p>¿Este número existiría aunque no hubiera ORC este ciclo? Si la respuesta es <strong>sí</strong> → es un KPI. Si es un número <strong>nuevo</strong> porque te propusiste cambiar algo → es un Key Result. El RC es el vehículo. El KPI es el destino.</p>
+    </div>
+
+    <div class="info-cta">
+      <p>¿Listo para ingresar tu ORC?<br><span>La IA lo evalúa en segundos con los criterios del programa.</span></p>
+      <button onclick="goToForm()">Validar mi ORC ↗</button>
+    </div>
+
+  </div>
+
+  <!-- ══ FORM (tab 2) ════════════════════════════════════════ -->
+  <div id="panel-form" class="panel">
+    <div id="form-section">
+      <div class="card">
+        <div class="card-title">👤 Datos del colaborador</div>
+        <div class="g2">
+          <div class="field"><label>Nombre completo <span class="req">*</span></label><input id="f-nombre" placeholder="Ej. María García López"></div>
+          <div class="field"><label>Puesto <span class="req">*</span></label><input id="f-puesto" placeholder="Ej. Gerente de Operaciones"></div>
+          <div class="field"><label>Dirección / Área <span class="req">*</span></label>
+            <select id="f-area">
+              <option value="">Selecciona...</option>
+              <option>Abasto</option><option>Administración</option><option>Auditoría</option>
+              <option>Comercial</option><option>Compañía Centro</option><option>Compañía Oriente</option>
+              <option>Compañía Poniente</option><option>Compañía Sureste</option><option>Compañía Veracruz</option>
+              <option>Crecimiento y Desarrollo</option><option>Expansión</option><option>Finanzas</option>
+              <option>General</option>
+              <option>Legal</option><option>Logística</option><option>Marketing</option>
+              <option>Recursos Humanos</option><option>Sistemas</option>
+            </select>
+          </div>
+          <div class="field"><label>Nivel de certificación <span class="req">*</span></label>
+            <select id="f-nivel">
+              <option value="">Selecciona...</option>
+              <option value="N2">Nivel 2 — Gerente</option>
+              <option value="N3">Nivel 3 — Director</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎯 Objetivo</div>
+        <div class="field">
+          <label>¿Qué quieres lograr este trimestre? <span class="req">*</span></label>
+          <textarea id="f-obj" rows="3" placeholder="Ej. Ser el área de Marketing más relevante de Neto, que convierta cada campaña en ventas medibles."></textarea>
+          <p class="hint">✓ Aspiracional &nbsp;·&nbsp; ✓ Sin números ni % &nbsp;·&nbsp; ✓ Dirección clara &nbsp;·&nbsp; ✗ No es una tarea ni título de puesto</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📏 Resultados Clave y Tareas</div>
+        <div id="kr-container"></div>
+        <div class="add-kr-wrap">
+          <button class="add-kr-btn" id="btn-add-kr" onclick="addKR()">
+            <span style="font-size:20px;line-height:1">＋</span> Agregar Resultado Clave
+            <span id="kr-counter" style="font-size:12px;color:#9ca3af"></span>
+          </button>
+          <p class="kr-hint">La metodología ORC recomienda entre 3 y 5 Resultados Clave por Objective</p>
+        </div>
+      </div>
+
+      <div id="err-box" class="err-box"></div>
+      <div id="loading" class="loading"><div class="spin"></div><span>La IA está evaluando tu ORC con los criterios del programa...</span></div>
+      <div class="actions">
+        <button class="btn primary" id="btn-eval" onclick="evaluar()">Evaluar con IA ↗</button>
+        <button class="btn" onclick="limpiar()">Limpiar formulario</button>
+      </div>
+    </div>
+    <div id="result-section" style="display:none"></div>
+  </div>
+
+  <!-- ══ DB (tab 3) ══════════════════════════════════════════ -->
+  <div id="panel-db" class="panel">
+    <div class="stat-grid" id="stats-grid"></div>
+    <div id="db-content"></div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+const KR_COLORS=['#6d28d9','#0e7490','#15803d','#dc2626','#d97706'];
+const MAX_KRS=5,MIN_KRS=3;
+const DB_KEY='neto-okr-cert-v6';
+let krCount=0;
+// Store last form state for auto-fill on reset
+let lastFormData=null;
+// Store last result's suggested corrections
+let lastSuggestions={};
+let lastRcAdicional=null;
+
+function loadDB(){try{return JSON.parse(localStorage.getItem(DB_KEY)||'[]');}catch{return[];}}
+function pushDB(r){const db=loadDB();db.unshift(r);localStorage.setItem(DB_KEY,JSON.stringify(db));}
+function gv(id){return(document.getElementById(id)||{}).value?.trim()||'';}
+function showErr(msg){const b=document.getElementById('err-box');b.textContent=msg;b.style.display=msg?'block':'none';}
+function setLoading(v){document.getElementById('loading').style.display=v?'flex':'none';document.getElementById('btn-eval').disabled=v;}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('panel-'+id).classList.add('on');
+  if(id==='db')renderDB();
+}
+
+function goToForm(){
+  document.querySelectorAll('.tab').forEach((b,i)=>{b.classList.toggle('on',i===1);});
+  document.querySelectorAll('.panel').forEach((p,i)=>{p.classList.toggle('on',i===1);});
+}
+
+/* ── KR blocks ── */
+function updateCounter(){
+  const l=document.getElementById('kr-counter');if(l)l.textContent=`(${krCount}/${MAX_KRS})`;
+  const b=document.getElementById('btn-add-kr');if(b)b.disabled=krCount>=MAX_KRS;
+}
+function tareaRowHTML(ki,ti,val=''){
+  return `<div class="tarea-row" id="tr-${ki}-${ti}">
+    <input id="kr${ki}_t${ti}" placeholder="Tarea: Ej. Negociar condiciones con proveedor estratégico" value="${val.replace(/"/g,'&quot;')}">
+    <button class="icon-btn" onclick="removeTarea(${ki},${ti})" title="Eliminar tarea">✕</button>
+  </div>`;
+}
+function krBlockHTML(ki,data={}){
+  const col=KR_COLORS[ki]||KR_COLORS[4];
+  const canDel=ki>=MIN_KRS;
+  const desc=(data.desc||'').replace(/"/g,'&quot;');
+  const base=(data.base||'').replace(/"/g,'&quot;');
+  const meta=(data.meta||'').replace(/"/g,'&quot;');
+  const tareas=data.tareas||['','',''];
+  return `<div class="kr-block" id="kr-block-${ki}" style="border-left-color:${col}">
+    <div class="kr-block-header">
+      <span class="kr-block-label" style="color:${col}">KEY RESULT ${ki+1}</span>
+      ${canDel?`<button class="icon-btn" onclick="removeKR(${ki})" title="Eliminar KR">✕</button>`:''}
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label>Descripción <span class="req">*</span></label>
+      <textarea id="kr${ki}_desc" rows="2" placeholder="Ej. Incrementar las ventas por metro cuadrado de $4,200 a $5,000 al cierre del trimestre.">${desc}</textarea>
+      <p class="hint">Mide un <strong>resultado</strong>, no una actividad. Si empieza con "crear/implementar/generar/lanzar" → probablemente es una tarea.</p>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div class="field"><label>Baseline — valor actual <span class="req">*</span></label><input id="kr${ki}_base" placeholder="Ej. $4,200 · 62% · 18 días" value="${base}"></div>
+      <div class="field"><label>Meta — valor objetivo <span class="req">*</span></label><input id="kr${ki}_meta" placeholder="Ej. $5,000 · 80% · 12 días" value="${meta}"></div>
+    </div>
+    <div>
+      <label>Tareas asociadas <span style="font-weight:400;color:var(--g400)">(agrega todas las que necesites)</span></label>
+      <p class="hint" style="margin-bottom:4px">Actividades concretas que ejecutarás. Las tareas son acciones, no resultados.</p>
+      <div id="kr${ki}_tareas">
+        ${tareas.map((t,ti)=>tareaRowHTML(ki,ti,t)).join('')}
+      </div>
+      <button class="add-btn" onclick="addTarea(${ki})"><span style="font-size:16px;line-height:1">＋</span> Agregar tarea</button>
+    </div>
+  </div>`;
+}
+function addKR(data={}){
+  if(krCount>=MAX_KRS)return;
+  document.getElementById('kr-container').insertAdjacentHTML('beforeend',krBlockHTML(krCount,data));
+  krCount++;updateCounter();
+}
+function removeKR(ki){
+  const el=document.getElementById(`kr-block-${ki}`);if(el){el.remove();krCount--;updateCounter();}
+  let v=0;for(let i=0;i<MAX_KRS;i++){const b=document.getElementById(`kr-block-${i}`);if(b){v++;const l=b.querySelector('.kr-block-label');if(l){const rb=l.querySelector('button');l.textContent=`KEY RESULT ${v}`;l.style.color=KR_COLORS[v-1]||KR_COLORS[4];if(rb)l.appendChild(rb);}}}
+}
+function addTarea(ki,val=''){
+  const c=document.getElementById(`kr${ki}_tareas`);
+  const ti=c.querySelectorAll('.tarea-row').length;
+  c.insertAdjacentHTML('beforeend',tareaRowHTML(ki,ti,val));
+}
+function removeTarea(ki,ti){
+  const r=document.getElementById(`tr-${ki}-${ti}`);
+  const c=document.getElementById(`kr${ki}_tareas`);
+  if(r&&c.querySelectorAll('.tarea-row').length>1)r.remove();
+}
+function init(prefill=null){
+  krCount=0;document.getElementById('kr-container').innerHTML='';
+  if(prefill){
+    if(prefill.nombre)document.getElementById('f-nombre').value=prefill.nombre;
+    if(prefill.puesto)document.getElementById('f-puesto').value=prefill.puesto;
+    if(prefill.area){const s=document.getElementById('f-area');for(let o of s.options)if(o.text===prefill.area||o.value===prefill.area){s.value=o.value;break;}}
+    if(prefill.nivel)document.getElementById('f-nivel').value=prefill.nivel;
+    if(prefill.obj)document.getElementById('f-obj').value=prefill.obj;
+    (prefill.krs||[]).forEach((kr,i)=>{
+      const krNum=i+1;
+      const sugg=lastSuggestions[krNum];
+      addKR({
+        desc: sugg?sugg.desc:kr.desc,
+        base: sugg&&sugg.base?sugg.base:(kr.base!=='No especificado'?kr.base:''),
+        meta: sugg&&sugg.meta?sugg.meta:(kr.meta!=='No especificado'?kr.meta:''),
+        tareas: kr.tareas||['','',''],
+        wasCorrected: !!sugg
+      });
+    });
+    // Add suggested additional RC if any
+    if(lastRcAdicional&&lastRcAdicional.sugerido&&krCount<MAX_KRS){
+      addKR({
+        desc: lastRcAdicional.descripcion||'',
+        base: lastRcAdicional.baseline||'',
+        meta: lastRcAdicional.meta||'',
+        tareas:['','',''],
+        wasCorrected:true,
+        isNew:true
+      });
+    }
+    while(krCount<MIN_KRS)addKR();
+    // Highlight corrected fields after DOM renders
+    setTimeout(()=>{
+      Object.keys(lastSuggestions).forEach(krNum=>{
+        const idx=parseInt(krNum)-1;
+        const sugg=lastSuggestions[krNum];
+        const textarea=document.getElementById(`kr${idx}_desc`);
+        if(textarea){textarea.style.borderColor='#16a34a';textarea.style.background='#f0fdf4';}
+        if(sugg.base){
+          const baseEl=document.getElementById(`kr${idx}_base`);
+          if(baseEl){baseEl.style.borderColor='#16a34a';baseEl.style.background='#f0fdf4';}
+        }
+        if(sugg.meta){
+          const metaEl=document.getElementById(`kr${idx}_meta`);
+          if(metaEl){metaEl.style.borderColor='#16a34a';metaEl.style.background='#f0fdf4';}
+        }
+      });
+      // Highlight new RC if added
+      if(lastRcAdicional&&lastRcAdicional.sugerido){
+        const newIdx=krCount-1;
+        const block=document.getElementById(`kr-block-${newIdx}`);
+        if(block){
+          block.style.borderColor='#d97706';
+          block.style.background='#fffbeb';
+          const lbl=block.querySelector('.kr-block-label');
+          if(lbl) lbl.textContent+=' ✨ Sugerido por la IA';
+        }
+      }
+    },150);
+  } else {
+    for(let i=0;i<MIN_KRS;i++)addKR();
+  }
+}
+init();
+
+/* ── Collect ── */
+function collectKRs(){
+  const krs=[];
+  for(let i=0;i<MAX_KRS;i++){
+    const block=document.getElementById(`kr-block-${i}`);if(!block)continue;
+    const desc=gv(`kr${i}_desc`);if(!desc)continue;
+    const base=gv(`kr${i}_base`)||'No especificado';
+    const meta=gv(`kr${i}_meta`)||'No especificado';
+    const tareas=[...block.querySelectorAll(`[id^="kr${i}_t"]`)].map(e=>e.value?.trim()).filter(Boolean);
+    krs.push({n:krs.length+1,desc,base,meta,tareas});
+  }
+  return krs;
+}
+
+/* ── Limpiar ── */
+function limpiar(){
+  ['f-nombre','f-puesto','f-area','f-nivel','f-obj'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  lastFormData=null;lastSuggestions={};
+  init();showErr('');
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('form-section').style.display='block';
+}
+
+/* ── Evaluar ── */
+function evaluar(){
+  showErr('');
+  const nombre=gv('f-nombre'),puesto=gv('f-puesto'),area=gv('f-area'),nivel=gv('f-nivel'),obj=gv('f-obj');
+  if(!nombre||!puesto||!area||!nivel||!obj){showErr('Completa todos los campos obligatorios (*).');return;}
+  const krs=collectKRs();
+  if(!krs.length){showErr('Ingresa al menos un Resultado Clave con descripción.');return;}
+  const nivelLabel=nivel==='N2'?'Nivel 2 — Gerente':'Nivel 3 — Director';
+  lastFormData={nombre,puesto,area,nivel,obj,krs};
+  lastSuggestions={};
+  setLoading(true);
+  directEval(nombre,puesto,area,nivel,nivelLabel,obj,krs);
+}
+
+async function directEval(nombre,puesto,area,nivel,nivelLabel,obj,krs){
+  try{
+    const resp=await fetch('/api/evaluar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nombre,puesto,area,nivel,nivelLabel,obj,krs})
+    });
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({error:'Error desconocido'}));
+      throw new Error(err.error||`HTTP ${resp.status}`);
+    }
+    const json=await resp.json();
+    // Extract suggestions - store by KR number (1-based)
+    lastSuggestions={};
+    (json.kr_feedback||[]).forEach(k=>{
+      if(k.version_mejorada && k.version_mejorada.trim()!==''){
+        lastSuggestions[k.kr]={
+          desc: k.version_mejorada.trim(),
+          base: k.baseline_sugerido&&k.baseline_sugerido.trim()!==''?k.baseline_sugerido.trim():null,
+          meta: k.meta_sugerida&&k.meta_sugerida.trim()!==''?k.meta_sugerida.trim():null
+        };
+      }
+    });
+    // Store additional RC suggestion if any
+    if(json.rc_adicional&&json.rc_adicional.sugerido){
+      lastRcAdicional=json.rc_adicional;
+    } else {
+      lastRcAdicional=null;
+    }
+    pushDB({nombre,puesto,area,nivel,nivelLabel,obj,krs,puntaje:json.puntaje,semaforo:json.semaforo,estado:json.estado,fecha:new Date().toLocaleDateString('es-MX')});
+    setLoading(false);
+    renderResult(json,{nombre,area,nivelLabel});
+  }catch(e){
+    setLoading(false);
+    showErr('Error al evaluar: '+e.message+'. Verifica tu conexión e intenta de nuevo.');
+  }
+}
+
+/* ── Render result ── */
+function renderResult(r,meta){
+  lastResult=r;
+  lastResultMeta=meta;
+  const col=r.semaforo;
+  const iconMap={verde:'✅',amarillo:'⚠️',rojo:'❌'};
+  const guiaMap={verde:'→ Siguiente paso',amarillo:'→ Correcciones antes de reenviar',rojo:'→ Cómo reescribir tu ORC'};
+  const hasSuggestions=Object.keys(lastSuggestions).length>0;
+
+  const krHTML=(r.kr_feedback||[]).map(k=>{
+    const kc=k.puntaje>=15?'verde':k.puntaje>=10?'amarillo':'rojo';
+    const accent=KR_COLORS[(k.kr-1)%KR_COLORS.length];
+    return `<div class="kr-result" style="border-left-color:${accent}">
+      <div class="kr-result-head" onclick="toggleAcc(this)">
+        <span style="font-size:13px;font-weight:700;color:${accent}">Resultado Clave ${k.kr}</span>
+        <div style="display:flex;align-items:center;gap:10px"><span class="badge ${kc}">${k.puntaje}/20 pts</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="kr-result-body">
+        <p>${k.comentario}</p>
+        ${k.version_mejorada?`<div class="suggestion-box"><div class="suggestion-label">💡 Versión sugerida (se aplicará al corregir):</div><p class="suggestion-text">"${k.version_mejorada}"</p></div>`:''}
+        ${k.tareas_comentario?`<div class="tarea-feedback"><strong>Tareas:</strong> ${k.tareas_ok?'✓':'⚠'} ${k.tareas_comentario}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const fortalezas=(r.fortalezas||[]).map(f=>`<li>${f}</li>`).join('');
+  const problemas=(r.problemas||[]).map(p=>`<li>${p}</li>`).join('');
+
+  document.getElementById('result-section').innerHTML=`
+    <div class="result-header">
+      <div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:5px">${meta.nombre} · ${meta.area} · ${meta.nivelLabel}</div>
+        <span class="badge ${col}">${iconMap[col]} ${r.estado}</span>
+      </div>
+      <div style="text-align:right"><div class="score-big">${r.puntaje}<span class="score-sub">/100</span></div></div>
+    </div>
+    <div class="result-body">
+      <div class="bar-bg"><div class="bar-fill ${col}" style="width:${r.puntaje}%"></div></div>
+      <p style="font-size:14px;line-height:1.75;color:var(--g700);margin-top:10px">${r.resumen}</p>
+      ${fortalezas?`<div class="r-section"><div class="r-section-title">✓ Fortalezas</div><ul>${fortalezas}</ul></div>`:''}
+      ${problemas?`<div class="r-section"><div class="r-section-title">✗ Problemas detectados</div><ul>${problemas}</ul></div>`:''}
+      <div class="r-section"><div class="r-section-title">Evaluación por Resultado Clave — toca para expandir</div>${krHTML}</div>
+      <div class="guia-box ${col}"><div class="guia-title">${guiaMap[col]}</div><p style="font-size:14px;line-height:1.75;color:var(--g700)">${r.guia_mejora}</p></div>
+      <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
+        ${col!=='verde'?`<button class="btn primary" onclick="resetWithSuggestions()">${hasSuggestions?'✏️ Corregir con sugerencias aplicadas':'✏️ Corregir y volver a validar'}</button>`:''}
+        ${col==='verde'?`<button class="btn primary" onclick="descargarConstancia()" style="background:#15803d;border-color:#15803d">⬇️ Descargar constancia</button>`:''}
+        <button class="reset-btn" onclick="resetClean()">Empezar de cero</button>
+      </div>
+    </div>`;
+  document.getElementById('result-section').style.display='block';
+  document.getElementById('form-section').style.display='none';
+}
+
+function toggleAcc(head){
+  const b=head.nextElementSibling,ch=head.querySelector('.chevron');
+  b.classList.toggle('open');ch.textContent=b.classList.contains('open')?'▲':'▼';
+}
+
+// Reset con datos pre-llenados y sugerencias aplicadas
+function resetWithSuggestions(){
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('result-section').innerHTML='';
+  document.getElementById('form-section').style.display='block';
+  showErr('');
+  if(lastFormData) init(lastFormData);
+  else init();
+}
+
+// Reset limpio
+function resetClean(){
+  lastFormData=null;lastSuggestions={};lastRcAdicional=null;
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('result-section').innerHTML='';
+  document.getElementById('form-section').style.display='block';
+  ['f-nombre','f-puesto','f-area','f-nivel','f-obj'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  init();showErr('');
+}
+
+let lastResult=null;
+let lastResultMeta=null;
+
+function descargarConstancia(){
+  if(!lastResult||!lastResultMeta) return;
+  const r=lastResult, meta=lastResultMeta;
+  const fecha=new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  const krsHTML=(r.kr_feedback||[]).map(k=>`
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#1B2A6B">RC ${k.kr}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb">${k.comentario}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#15803d">${k.puntaje}/20</td>
+    </tr>`).join('');
+
+  const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;margin:0;padding:40px;color:#1f2937;background:#fff}
+    .header{background:#1B2A6B;padding:24px 32px;border-radius:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+    .header h1{color:#fff;font-size:20px;margin:0}
+    .header .sub{color:#94a3b8;font-size:12px;margin-top:4px}
+    .header .score{text-align:right}
+    .header .score .n{font-size:36px;font-weight:700;color:#fff}
+    .header .score .l{font-size:12px;color:#94a3b8}
+    .badge{display:inline-block;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:5px 16px;border-radius:20px;font-weight:700;font-size:14px;margin-bottom:16px}
+    .section{margin-bottom:20px}
+    .section h3{font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}
+    .obj-box{background:#EEF1FF;border-radius:8px;padding:12px 16px;font-size:14px;color:#1B2A6B;font-weight:600;line-height:1.5}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:#1B2A6B;color:#fff;padding:10px 12px;text-align:left;font-size:12px}
+    .fortaleza{font-size:13px;padding:4px 0;color:#374151}
+    .fortaleza::before{content:'✓ ';color:#15803d;font-weight:700}
+    .footer{margin-top:32px;text-align:center;font-size:11px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
+    .meta-item{background:#f9fafb;border-radius:8px;padding:10px 14px}
+    .meta-item .l{font-size:11px;color:#9ca3af;margin-bottom:3px}
+    .meta-item .v{font-size:14px;font-weight:600;color:#1f2937}
+  </style></head><body>
+  <div class="header">
+    <div>
+      <div class="sub">PROGRAMA DE CERTIFICACIÓN ORC · TIENDAS NETO</div>
+      <h1>Constancia de Certificación</h1>
+      <div class="sub">Emitida el ${fecha}</div>
+    </div>
+    <div class="score">
+      <div class="n">${r.puntaje}</div>
+      <div class="l">puntos / 100</div>
+    </div>
+  </div>
+
+  <div class="badge">✅ ${r.estado}</div>
+
+  <div class="meta-grid">
+    <div class="meta-item"><div class="l">Colaborador</div><div class="v">${meta.nombre}</div></div>
+    <div class="meta-item"><div class="l">Área / Dirección</div><div class="v">${meta.area}</div></div>
+    <div class="meta-item"><div class="l">Nivel</div><div class="v">${meta.nivelLabel}</div></div>
+  </div>
+
+  <div class="section">
+    <h3>🎯 Objetivo</h3>
+    <div class="obj-box">${lastFormData?.obj||''}</div>
+  </div>
+
+  <div class="section">
+    <h3>📏 Evaluación de Resultados Clave</h3>
+    <table>
+      <thead><tr><th>RC</th><th>Comentario</th><th style="text-align:center">Puntaje</th></tr></thead>
+      <tbody>${krsHTML}</tbody>
+    </table>
+  </div>
+
+  ${r.fortalezas&&r.fortalezas.length?`<div class="section">
+    <h3>✓ Fortalezas destacadas</h3>
+    ${r.fortalezas.map(f=>`<div class="fortaleza">${f}</div>`).join('')}
+  </div>`:''}
+
+  <div class="section">
+    <h3>💬 Resumen de la evaluación</h3>
+    <p style="font-size:14px;line-height:1.7;color:#374151">${r.resumen}</p>
+  </div>
+
+  <div class="footer">
+    Este documento es un respaldo de la evaluación automática realizada en el Validador ORC de Tiendas Neto.<br>
+    La certificación oficial queda registrada en el sistema del Programa de Certificación ORC.
+  </div>
+  <script>window.onload=()=>window.print()</script>
+  </body></html>`;
+
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Constancia_ORC_${meta.nombre.replace(/\s+/g,'_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function revalidar(idx){
+  const db=loadDB();
+  const r=db[idx];
+  if(!r) return;
+  // Switch to form tab
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',i===1));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('on',i===1));
+  // Reset result
+  document.getElementById('result-section').style.display='none';
+  document.getElementById('result-section').innerHTML='';
+  document.getElementById('form-section').style.display='block';
+  showErr('');
+  lastSuggestions={};lastRcAdicional=null;
+  // Pre-fill with saved data
+  lastFormData={nombre:r.nombre,puesto:r.puesto,area:r.area,nivel:r.nivel,obj:r.obj,krs:r.krs||[]};
+  init(lastFormData);
+}
+
+function renderDB(){
+  const db=loadDB();
+  const ap=db.filter(r=>r.semaforo==='verde').length;
+  const co=db.filter(r=>r.semaforo==='amarillo').length;
+  const re=db.filter(r=>r.semaforo==='rojo').length;
+  document.getElementById('stats-grid').innerHTML=[
+    {n:db.length,l:'Total enviados',c:'#1B2A6B'},{n:ap,l:'Aprobados',c:'#15803d'},
+    {n:co,l:'Condicionales',c:'#d97706'},{n:re,l:'No aprobados',c:'#dc2626'},
+  ].map(s=>`<div class="stat-card"><div class="stat-n" style="color:${s.c}">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
+  if(!db.length){document.getElementById('db-content').innerHTML='<div class="empty-state">Aún no hay registros. Valida tu primer ORC.</div>';return;}
+  document.getElementById('db-content').innerHTML=`<div class="db-wrap"><table class="db-table">
+    <thead><tr><th>Colaborador</th><th>Área</th><th>Nivel</th><th>Puntaje</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+    <tbody>${db.map((r,i)=>`<tr>
+      <td><div class="nm">${r.nombre}</div><div class="nm-sub">${r.puesto}</div></td>
+      <td>${r.area}</td><td><span class="lvl-pill">${r.nivelLabel}</span></td>
+      <td><strong>${r.puntaje}</strong>/100</td>
+      <td><span class="pill ${r.semaforo}">${r.estado}</span></td>
+      <td style="color:var(--g400)">${r.fecha}</td>
+      <td><button onclick="revalidar(${i})" style="padding:4px 10px;border-radius:6px;border:1px solid var(--g200);background:#fff;font-size:12px;cursor:pointer;color:var(--navy);font-family:inherit;font-weight:500" title="Volver a validar este ORC">↺ Revalidar</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+</script>
+</body>
+</html>
