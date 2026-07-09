@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "api/evaluar.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "routes": [
     { "src": "/api/evaluar", "dest": "/api/evaluar.js" },
     { "src": "/(.*)", "dest": "/public/$1" }
