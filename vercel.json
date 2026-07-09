@@ -2,6 +2,7 @@
   "version": 2,
   "routes": [
     { "src": "/api/evaluar", "dest": "/api/evaluar.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
